@@ -5,9 +5,12 @@ package org.blimpit.utils.connectors.mysql;
 import org.blimpit.utils.connectors.Connection;
 import org.blimpit.utils.connectors.ConnectorException;
 
+import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -184,31 +187,27 @@ class MySQLConnection extends Connection {
     @Override
     protected Record[] read(String table) throws ConnectorException {
 
-        int j = 1;
-
-        Record record,recordArr[];
-
+        Record record;
+        ArrayList arrayList = new ArrayList();
 
         try {
 
             statement = connection.prepareStatement("SELECT * FROM " + table);
             ResultSet rs = statement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
 
-           ///TODO
+            while(rs.next()){
 
-//            while (rs.next()) {
-//
-//                record = new Record(j);
-//                recordArr = new Record[rs.]
-//
-//                for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-//
-//                    record.addRecordAttribute(rs.getMetaData().getColumnName(i),rs.getString(i));
-//                    //System.out.println(rs.getMetaData().getColumnName(i)+" , "+rs.getString(i));
-//
-//                }
-//                j++;
-//            }
+                record = new Record(rs.getRow());
+
+                for(int i =1;i<=rsmd.getColumnCount();i++){
+
+                    record.addRecordAttribute(rsmd.getColumnName(i),rs.getString(i));
+                }
+
+                arrayList.add(record);
+
+            }
 
         } catch (SQLException e) {
 
@@ -216,7 +215,9 @@ class MySQLConnection extends Connection {
             throw ex;
         }
 
-        return new Record[0];
+
+
+        return new Record [0];
     }
 
 }
