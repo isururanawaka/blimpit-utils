@@ -2,7 +2,7 @@ package org.blimpit.utils.connectors.mysql;
 
 import org.blimpit.utils.connectors.Connector;
 import org.blimpit.utils.connectors.ConnectorException;
-import org.blimpit.utils.connectors.Record;
+
 
 import java.util.Map;
 
@@ -61,15 +61,8 @@ public class MySQLConnector  implements Connector  {
     }
 
 
-    public String read(String collectionName, String key, String KeyValue) throws ConnectorException {
 
-
-        return mySQLConnection.read(collectionName,1);
-
-    }
-
-
-    public String readBetween(String startTime, String endTime, String collectionName) throws ConnectorException {
+    public Record[] read(String startTime, String endTime, String collectionName) throws ConnectorException {
         return mySQLConnection.read(startTime, endTime, collectionName);
     }
 

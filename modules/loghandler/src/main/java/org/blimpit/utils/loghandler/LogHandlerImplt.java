@@ -40,12 +40,12 @@ public class LogHandlerImplt implements LogHandler {
 
     public void storeLogInDB(String username, String activity) {
 
-        System.out.println("Not yet implemented");
+
 
     }
 
 
-    public String getLogs(double beginTimeStamp, double endTimeStamp, String userName) {
+    public String getLogs(double beginTimeStamp, double endTimeStamp, String userName) throws Exception {
 
         String concatString = "";
         try {
@@ -68,11 +68,11 @@ public class LogHandlerImplt implements LogHandler {
             }
             fstream.close();
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+            throw e;
         }
 
-        System.out.println(concatString);
-        return null;
+
+        return concatString;
     }
 
 

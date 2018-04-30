@@ -28,7 +28,7 @@ public interface LogHandler {
      * @param userName
      * @return
      */
-    String getLogs(double beginTimeStamp, double endTimeStamp, String userName);
+    String getLogs(double beginTimeStamp, double endTimeStamp, String userName) throws Exception;
 
 
     /**

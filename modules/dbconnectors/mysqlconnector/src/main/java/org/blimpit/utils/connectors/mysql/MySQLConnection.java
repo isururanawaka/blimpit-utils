@@ -4,7 +4,6 @@ package org.blimpit.utils.connectors.mysql;
 
 import org.blimpit.utils.connectors.Connection;
 import org.blimpit.utils.connectors.ConnectorException;
-import org.blimpit.utils.connectors.Record;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,19 +56,6 @@ class MySQLConnection extends Connection {
         }
 
     }
-
-
-//    public void creatTableCore(String tablename) {
-//        java.sql.Connection con = (java.sql.Connection) MySQLConnector.getInstance(ip, port, dbName, username, password);
-//
-//        if (con != null) {
-//            System.out.println("Connected !!.");
-//            System.out.println(con);
-//            System.out.println(tablename);
-//        } else {
-//            System.out.println("Not yet Connected  or Error!!!.");
-//        }
-//    }
 
 
     public boolean isOpen() {
@@ -133,36 +119,9 @@ class MySQLConnection extends Connection {
 
     }
 
+    ////TODO
     @Override
-    public String read(String table,int temp) throws ConnectorException {
-
-        String result = "";
-        int i = 0;
-        try {
-            statement = connection.prepareStatement("SELECT * FROM " + table);
-            ResultSet rs = statement.executeQuery();
-
-            while (rs.next()) {
-
-                result = result + "\n";
-
-                String tempres = rs.getString(1);
-                result = result + tempres;
-                tempres = rs.getString(2);
-                result = result + " " + tempres;
-
-            }
-            //System.out.println(result);
-        } catch (SQLException e) {
-            ConnectorException ex = new ConnectorException(e, "Read Table");
-            throw ex;
-        }
-
-        return result;
-    }
-
-    @Override
-    public String read(String startTime, String endTime, String table) throws ConnectorException {
+    public Record[] read(String startTime, String endTime, String table) throws ConnectorException {
         String result = "";
         try {
             statement = connection.prepareStatement("SELECT LogEntrery FROM " + table + " WHERE Date BETWEEN " + startTime + "AND" + endTime);
@@ -176,7 +135,7 @@ class MySQLConnection extends Connection {
             throw ex;
         }
 
-        return result;
+        return new Record[0];
     }
 
     @Override
@@ -208,7 +167,7 @@ class MySQLConnection extends Connection {
 
             for (String key : records.keySet()) {
                 statement.setString(i, records.get(key));
-                //System.out.println(recordes.get(key));
+
                 i++;
             }
             return true;
@@ -235,7 +194,7 @@ class MySQLConnection extends Connection {
             statement = connection.prepareStatement("SELECT * FROM " + table);
             ResultSet rs = statement.executeQuery();
 
-            System.out.println(rs.); ///TODO
+           ///TODO
 
 //            while (rs.next()) {
 //

@@ -1,7 +1,8 @@
 package org.blimpit.utils.connectors;
 
-import java.sql.SQLException;
+
 import java.util.Map;
+import org.blimpit.utils.connectors.mysql.*;
 
 /**
  * An interface which describes APIs for MySQL DB operations
@@ -34,15 +35,6 @@ public interface Connector {
      */
     boolean isOpen();
 
-    /**
-     *
-     * @param collectionName
-     * @param key
-     * @param keyValue
-     * @return
-     * @throws SQLException
-     */
-    String read(String collectionName, String key, String keyValue) throws ConnectorException;
 
     /**
      *
@@ -52,7 +44,7 @@ public interface Connector {
      * @return
      * @throws ConnectorException
      */
-    String readBetween(String startTime, String endTime, String collectionName) throws ConnectorException;
+    Record[] read(String startTime, String endTime, String collectionName) throws ConnectorException;
 
     /**
      *
