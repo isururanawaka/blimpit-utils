@@ -15,6 +15,7 @@ public class Record {
 
 
     public Record(int index) {
+        this.index = index;
         this.recordAttributes = new HashMap<String, String>();
     }
 
@@ -34,6 +35,9 @@ public class Record {
      * @return recordAttributes
      */
     public Map<String, String> getRecordAttributes() {
+
+
+
         return recordAttributes;
     }
 

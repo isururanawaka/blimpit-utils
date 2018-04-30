@@ -62,5 +62,5 @@ public interface Connector {
      * @param table Table Name
      * @return Record
      */
-    Record[]  read(String table) throws ConnectorException;
+    Record[] read(String table) throws ConnectorException;
 }

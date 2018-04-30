@@ -73,10 +73,7 @@ public class MySQLConnector  implements Connector  {
 
 
     public Record[] read(String table) throws ConnectorException {
-
-      mySQLConnection.read(table);
-
-        return new Record[0];
+      return mySQLConnection.read(table);
     }
 
 

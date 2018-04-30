@@ -202,6 +202,8 @@ class MySQLConnection extends Connection {
 
             while (rs.next()) {
 
+                System.out.println(rs.getRow());
+
                 record = new Record(rs.getRow());
 
                 for (int i = 1; i <= rsmd.getColumnCount(); i++) {
@@ -219,8 +221,17 @@ class MySQLConnection extends Connection {
             throw ex;
         }
 
+        int tempArrListSize = arrayList.size();
 
-        return new Record[0];
+        /////TODO
+
+        Record[] arrRecord = new Record[arrayList.size()];
+
+        for (int i = 1; i <= tempArrListSize; i++) {
+            arrRecord[i] = (Record) arrayList.get(i-1);
+        }
+
+        return arrRecord;
     }
 
 }
