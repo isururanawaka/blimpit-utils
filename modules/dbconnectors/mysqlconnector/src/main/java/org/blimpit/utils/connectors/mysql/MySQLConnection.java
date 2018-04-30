@@ -125,12 +125,16 @@ class MySQLConnection extends Connection {
     @Override
     public Record[] read(String startTime, String endTime, String table) throws ConnectorException {
 
+
         Record record;
 
         try {
             statement = connection.prepareStatement("SELECT LogEntrery FROM " + table + " WHERE Date BETWEEN " + startTime + "AND" + endTime);
             ResultSet rs = statement.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
+            int sizeofResult = rs.getRow();
+
+            
 
             while (rs.next()) {
                 record = new Record(rs.getRow());
@@ -228,7 +232,7 @@ class MySQLConnection extends Connection {
         Record[] arrRecord = new Record[arrayList.size()];
 
         for (int i = 1; i <= tempArrListSize; i++) {
-            arrRecord[i] = (Record) arrayList.get(i-1);
+            arrRecord[i] = (Record) arrayList.get(i - 1);
         }
 
         return arrRecord;
