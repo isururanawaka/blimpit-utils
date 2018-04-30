@@ -5,7 +5,6 @@ package org.blimpit.utils.connectors.mysql;
 import org.blimpit.utils.connectors.Connection;
 import org.blimpit.utils.connectors.ConnectorException;
 
-import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -125,13 +124,18 @@ class MySQLConnection extends Connection {
     ////TODO
     @Override
     public Record[] read(String startTime, String endTime, String table) throws ConnectorException {
-        String result = "";
+
+        Record record;
+
         try {
             statement = connection.prepareStatement("SELECT LogEntrery FROM " + table + " WHERE Date BETWEEN " + startTime + "AND" + endTime);
             ResultSet rs = statement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+
             while (rs.next()) {
-                result = result + rs.getString(1) + "\n";
-                //System.out.println(rs.getString(1));
+                record = new Record(rs.getRow());
+                record.addRecordAttribute(rsmd.getColumnName(1), rs.getString(1));
+
             }
         } catch (SQLException e) {
             ConnectorException ex = new ConnectorException(e, "Read Specific");
@@ -196,13 +200,13 @@ class MySQLConnection extends Connection {
             ResultSet rs = statement.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
 
-            while(rs.next()){
+            while (rs.next()) {
 
                 record = new Record(rs.getRow());
 
-                for(int i =1;i<=rsmd.getColumnCount();i++){
+                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 
-                    record.addRecordAttribute(rsmd.getColumnName(i),rs.getString(i));
+                    record.addRecordAttribute(rsmd.getColumnName(i), rs.getString(i));
                 }
 
                 arrayList.add(record);
@@ -216,8 +220,7 @@ class MySQLConnection extends Connection {
         }
 
 
-
-        return new Record [0];
+        return new Record[0];
     }
 
 }
