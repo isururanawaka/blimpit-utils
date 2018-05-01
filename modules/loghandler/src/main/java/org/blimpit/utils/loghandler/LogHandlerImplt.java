@@ -76,7 +76,5 @@ public class LogHandlerImplt implements LogHandler {
     }
 
 
-    public String getLogsFromDB(double beginTimeStamp, double endTimeStamp, String userName) {
-        return "Not Implemented";
-    }
+    public String getLogsFromDB(double beginTimeStamp, double endTimeStamp, String userName) {return "Not Implemented";}
 }

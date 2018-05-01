@@ -12,9 +12,9 @@ public class LogHandlerImpltTest {
         log.logMessage("Sirimal","Has Logged");
     }
     @Test
-    public void testGetLogs(){
+    public void testGetLogs() throws Exception {
 
-        log.getLogs(14.00,14.16,"Sirimal");
+        System.out.println(log.getLogs(10.00,10.50,"Sirimal"));
 
     }
 
