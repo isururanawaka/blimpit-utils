@@ -3,14 +3,12 @@ package org.blimpit.utils.connectors.mysql;
 import org.blimpit.utils.connectors.Connector;
 import org.blimpit.utils.connectors.ConnectorException;
 
-
-import java.sql.SQLException;
 import java.util.Map;
 
 /**
  * A Class which handles MySQL operations
  */
-public class MySQLConnector  implements Connector  {
+public class MySQLConnector implements Connector {
 
     private static volatile MySQLConnector mySQLConnector;
     private static MySQLConnection mySQLConnection;
@@ -62,7 +60,6 @@ public class MySQLConnector  implements Connector  {
     }
 
 
-
     public Record[] read(String startTime, String endTime, String collectionName) throws ConnectorException {
         return mySQLConnection.read(startTime, endTime, collectionName);
     }
@@ -74,7 +71,7 @@ public class MySQLConnector  implements Connector  {
 
 
     public Record[] read(String table) throws ConnectorException {
-      return mySQLConnection.read(table);
+        return mySQLConnection.read(table);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.blimpit.utils.connectors;
 
 
-import java.sql.SQLException;
+
 import java.util.Map;
 import org.blimpit.utils.connectors.mysql.*;
 
