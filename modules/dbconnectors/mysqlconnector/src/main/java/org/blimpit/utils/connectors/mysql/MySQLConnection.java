@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -18,6 +19,9 @@ import java.util.Map;
  */
 class MySQLConnection extends Connection {
 
+    String ke;
+    String validnt;
+    int i = 1;
     private PreparedStatement statement = null;
     private String ip;
     private String port;
@@ -25,7 +29,6 @@ class MySQLConnection extends Connection {
     private String username;
     private String password;
     private java.sql.Connection connection;
-
 
     MySQLConnection(String ip, String port, String dbName,
                     String username, String password) {
@@ -44,6 +47,29 @@ class MySQLConnection extends Connection {
         dbName = "test";
         username = "root";
         password = "";
+    }
+
+    private void maptoString(Map<String, String> recordMap) {
+        StringBuilder bul = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+
+        for (String str : recordMap.keySet()) {
+            if (recordMap.size() != i) {
+                bul.append(str).append(",");
+                sb.append("?").append(",");
+            } else {
+                bul.append(str);
+                sb.append("?");
+            }
+
+            i++;
+        }
+
+
+        ke = bul.toString();
+        validnt = sb.toString();
+        i = 1;
+
     }
 
     // Connect the MYSQL Server
@@ -67,27 +93,7 @@ class MySQLConnection extends Connection {
     @Override
     public boolean insert(String table, Map<String, String> recordMap) throws ConnectorException {
 
-        int i = 1;
-        String ke;
-        String validnt;
-
-        StringBuilder bul = new StringBuilder();
-        StringBuilder sb = new StringBuilder();
-
-        for (String str : recordMap.keySet()) {
-            if (recordMap.size() != i) {
-                bul.append(str).append(",");
-                sb.append("?").append(",");
-            } else {
-                bul.append(str);
-                sb.append("?");
-            }
-
-            i++;
-        }
-        ke = bul.toString();
-        validnt = sb.toString();
-        i = 1;
+        maptoString(recordMap);
 
         try {
             statement = connection.prepareStatement("INSERT INTO " + table + "(" + ke + ") VALUES " + " (" + validnt + ")" + " "); /// specify the number of entries
@@ -121,57 +127,10 @@ class MySQLConnection extends Connection {
 
     }
 
-    ////TODO
-    @Override
-    public Record[] read(String startTime, String endTime, String table) throws ConnectorException {
-
-
-        Record record;
-
-        try {
-            statement = connection.prepareStatement("SELECT LogEntrery FROM " + table + " WHERE Date BETWEEN " + startTime + "AND" + endTime);
-            ResultSet rs = statement.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int sizeofResult = rs.getRow();
-
-            
-
-            while (rs.next()) {
-                record = new Record(rs.getRow());
-                record.addRecordAttribute(rsmd.getColumnName(1), rs.getString(1));
-
-            }
-        } catch (SQLException e) {
-            ConnectorException ex = new ConnectorException(e, "Read Specific");
-            throw ex;
-        }
-
-        return new Record[0];
-    }
-
     @Override
     protected boolean update(String table, String selectionKey, String selectionVal, Map<String, String> records) throws ConnectorException {
-        StringBuilder bul = new StringBuilder();
-        StringBuilder sb = new StringBuilder();
 
-        int i = 1;
-        String ke;
-        String validnt;
-
-        for (String str : records.keySet()) {
-            if (records.size() != i) {
-                bul.append(str).append(",");
-                sb.append("?").append(",");
-            } else {
-                bul.append(str);
-                sb.append("?");
-            }
-
-            i++;
-        }
-        ke = bul.toString();
-        validnt = sb.toString();
-        i = 1;
+        maptoString(records);
         try {
 
             statement = connection.prepareStatement("UPDATE " + table + " SET " + ke + " = " + validnt + " WHERE " + selectionKey + " in (" + selectionVal + ")");
@@ -196,7 +155,7 @@ class MySQLConnection extends Connection {
     protected Record[] read(String table) throws ConnectorException {
 
         Record record;
-        ArrayList arrayList = new ArrayList();
+        List<Record> arrayList = new ArrayList<Record>();
 
         try {
 
@@ -205,8 +164,6 @@ class MySQLConnection extends Connection {
             ResultSetMetaData rsmd = rs.getMetaData();
 
             while (rs.next()) {
-
-                System.out.println(rs.getRow());
 
                 record = new Record(rs.getRow());
 
@@ -225,17 +182,36 @@ class MySQLConnection extends Connection {
             throw ex;
         }
 
-        int tempArrListSize = arrayList.size();
+        return arrayList.toArray(new Record[0]);
+    }
 
-        /////TODO
+    ////TODO
+    @Override
+    public Record[] read(String startTime, String endTime, String table) throws ConnectorException {
 
-        Record[] arrRecord = new Record[arrayList.size()];
 
-        for (int i = 1; i <= tempArrListSize; i++) {
-            arrRecord[i] = (Record) arrayList.get(i - 1);
+        List<Record> arrayList = new ArrayList<Record>();
+
+        Record record;
+
+        try {
+            statement = connection.prepareStatement("SELECT LogEntrery FROM " + table + " WHERE Date BETWEEN " + startTime + "AND" + endTime);
+            ResultSet rs = statement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            while (rs.next()) {
+
+                record = new Record(rs.getRow());
+                record.addRecordAttribute(rsmd.getColumnName(1), rs.getString(1));
+                arrayList.add(record);
+
+            }
+        } catch (SQLException e) {
+            ConnectorException ex = new ConnectorException(e, "Read Specific");
+            throw ex;
         }
 
-        return arrRecord;
+        return arrayList.toArray(new Record[0]);
     }
 
 }
