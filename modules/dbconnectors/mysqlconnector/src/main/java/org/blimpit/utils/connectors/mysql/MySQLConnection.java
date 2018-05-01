@@ -21,6 +21,7 @@ class MySQLConnection extends Connection {
 
     String ke;
     String validnt;
+    //String key;
     int i = 1;
     private PreparedStatement statement = null;
     private String ip;
@@ -50,15 +51,19 @@ class MySQLConnection extends Connection {
     }
 
     private void maptoString(Map<String, String> recordMap) {
+
         StringBuilder bul = new StringBuilder();
         StringBuilder sb = new StringBuilder();
+        //  StringBuilder keyAdd = new StringBuilder();
 
         for (String str : recordMap.keySet()) {
             if (recordMap.size() != i) {
                 bul.append(str).append(",");
+                //        keyAdd.append(recordMap.get(str)).append(",");
                 sb.append("?").append(",");
             } else {
                 bul.append(str);
+                //      keyAdd.append(recordMap.get(str));
                 sb.append("?");
             }
 
@@ -68,6 +73,7 @@ class MySQLConnection extends Connection {
 
         ke = bul.toString();
         validnt = sb.toString();
+        ///key = keyAdd.toString();
         i = 1;
 
     }
@@ -130,17 +136,30 @@ class MySQLConnection extends Connection {
     @Override
     protected boolean update(String table, String selectionKey, String selectionVal, Map<String, String> records) throws ConnectorException {
 
+        String temp = " ";
+
         maptoString(records);
+        i = 1;
+
         try {
 
-            statement = connection.prepareStatement("UPDATE " + table + " SET " + ke + " = " + validnt + " WHERE " + selectionKey + " in (" + selectionVal + ")");
+            //statement = connection.prepareStatement("UPDATE " + table + " SET " + ke + " = " + validnt + " WHERE " + selectionKey + " = " + selectionVal);
 
             for (String key : records.keySet()) {
-                statement.setString(i, records.get(key));
+
+                temp = records.get(key);
 
                 i++;
             }
-            return true;
+
+            statement = connection.prepareStatement("UPDATE " + table + " SET LogEntrery = '" + temp + "' WHERE id = 4");
+
+            if (statement.executeUpdate() == 1)
+                return true;
+            else return false;
+            //statement.executeUpdate();
+
+
 
         } catch (SQLException e) {
 
@@ -182,13 +201,13 @@ class MySQLConnection extends Connection {
             throw ex;
         }
 
-        return arrayList.toArray(new Record[0]);
+
+        return arrayList.toArray(new Record[arrayList.size()]);
     }
 
-    ////TODO
+
     @Override
     public Record[] read(String startTime, String endTime, String table) throws ConnectorException {
-
 
         List<Record> arrayList = new ArrayList<Record>();
 
@@ -211,7 +230,7 @@ class MySQLConnection extends Connection {
             throw ex;
         }
 
-        return arrayList.toArray(new Record[0]);
+        return arrayList.toArray(new Record[arrayList.size()]);
     }
 
 }

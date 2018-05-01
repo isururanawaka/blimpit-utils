@@ -37,19 +37,18 @@ public class LogHandlerImplt implements LogHandler {
         logger.info(activity);
     }
 
-
     public void storeLogInDB(String username, String activity) {
 
 
 
     }
 
-
     public String getLogs(double beginTimeStamp, double endTimeStamp, String userName) throws Exception {
 
         String concatString = "";
+        FileInputStream fstream = null;
         try {
-            FileInputStream fstream = new FileInputStream("bmp/" + userName + ".log");
+            fstream = new FileInputStream("bmp/" + userName + ".log");
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
             String strLine;
             /* read log line by line */
@@ -61,20 +60,23 @@ public class LogHandlerImplt implements LogHandler {
                 if (beginTimeStamp <= temp) {
                     if (endTimeStamp >= temp) {
                         //concatString = concatString + strLine.substring(17) + "\n";
-                        concatString = concatString+strLine+"\n";
+                        concatString = concatString + strLine + "\n";
                     }
                 }
 
             }
-            fstream.close();
+            //fstream.close();
         } catch (Exception e) {
             throw e;
+        } finally {
+
+            fstream.close();
+
         }
 
 
         return concatString;
     }
 
-
-    public String getLogsFromDB(double beginTimeStamp, double endTimeStamp, String userName) {return "Not Implemented";}
+    public String getLogsFromDB(double beginTimeStamp, double endTimeStamp, String userName) {return "Not Implemented";    }
 }

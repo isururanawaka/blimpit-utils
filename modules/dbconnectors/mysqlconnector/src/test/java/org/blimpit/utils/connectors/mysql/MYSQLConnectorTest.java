@@ -2,12 +2,13 @@ package org.blimpit.utils.connectors.mysql;
 
 import org.blimpit.utils.connectors.Connector;
 import org.blimpit.utils.connectors.ConnectorException;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class MYSQLConnectorTest {
 
@@ -20,31 +21,28 @@ public class MYSQLConnectorTest {
     }
 
 
-    @Before
-    public void befor() throws ConnectorException {
-        System.out.println("Connection is: " + MYSQLConnectorTest().isOpen());
-    }
-
-    @Test
-    public void testConnectMYSQL() throws ConnectorException {
-        MySQLConnector.getInstance("localhost", "3306", "test", "root", "");
-    }
-
     @Test
     public void testInsert() throws ConnectorException {
 
-        recodes.put("keyval", "Hello");
-        recodes.put("val", "World");
+        recodes.put("LogEntrery", "Test Log");
+        recodes.put("Date", "HI");
 
+        boolean stat = MYSQLConnectorTest().insert("table_log", recodes);
+        assertEquals(true,stat);
 
-        System.out.println("Insert Query Statues: " + MYSQLConnectorTest().insert("test", recodes));
     }
 
     @Test
     public void testDeleteOne() throws ConnectorException {
-        System.out.println("Delete Querry Statues: " + MYSQLConnectorTest().delete("test", "val", "Hi"));
+        boolean stat = MYSQLConnectorTest().delete("test", "val", "Hi");
+        assertEquals(true,stat);
+
     }
 
+    @Test
+    public void testisOpen() throws ConnectorException {
+        assertNotNull(MYSQLConnectorTest().isOpen());
+    }
 
     @Test
     public void testRead() {
@@ -57,7 +55,7 @@ public class MYSQLConnectorTest {
 
             for (Record record : araList = y.read("test")) {
 
-                System.out.println(record.getRecordAttributes());
+                assertNotNull("Recodes read", record.getRecordAttributes());
 
             }
 
@@ -65,6 +63,16 @@ public class MYSQLConnectorTest {
             System.out.println(e.toString());
         }
 
+    }
+
+    @Test
+    public void testUpdate() throws ConnectorException {
+        Map<String, String> records = new HashMap<String, String>();
+        records.put("LogEntrery","hello");
+
+        boolean update = MYSQLConnectorTest().update("table_log", "id", "5", recodes);
+
+        assertEquals(true,update);
     }
 
     @Test
@@ -78,7 +86,7 @@ public class MYSQLConnectorTest {
 
             for (Record record : araList = y.read(" 12.25", " 12.50", "table_log")) {
 
-                System.out.println(record.getRecordAttributes());
+                assertNotNull("Log Entry Records", record.getRecordAttributes());
 
             }
 

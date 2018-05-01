@@ -2,6 +2,8 @@ package org.blimpit.utils.loghandler;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
+
 public class LogHandlerImpltTest {
 
     LogHandlerImplt log = new LogHandlerImplt();
@@ -14,7 +16,7 @@ public class LogHandlerImpltTest {
     @Test
     public void testGetLogs() throws Exception {
 
-        System.out.println(log.getLogs(10.00,10.50,"Sirimal"));
+        assertNotNull(log.getLogs(10.00,10.50,"Sirimal"));
 
     }
 
