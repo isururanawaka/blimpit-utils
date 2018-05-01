@@ -139,26 +139,21 @@ class MySQLConnection extends Connection {
         String temp = " ";
 
         maptoString(records);
-        i = 1;
+
+        for (String key : records.keySet()) {
+            temp = records.get(key);
+            i++;
+        }
 
         try {
 
-            //statement = connection.prepareStatement("UPDATE " + table + " SET " + ke + " = " + validnt + " WHERE " + selectionKey + " = " + selectionVal);
+            statement = connection.prepareStatement("UPDATE " + table + " SET LogEntrery = '" + temp + "' WHERE " + selectionKey + " = " + selectionVal);
 
-            for (String key : records.keySet()) {
-
-                temp = records.get(key);
-
-                i++;
-            }
-
-            statement = connection.prepareStatement("UPDATE " + table + " SET LogEntrery = '" + temp + "' WHERE id = 4");
 
             if (statement.executeUpdate() == 1)
                 return true;
             else return false;
             //statement.executeUpdate();
-
 
 
         } catch (SQLException e) {
@@ -183,7 +178,6 @@ class MySQLConnection extends Connection {
             ResultSetMetaData rsmd = rs.getMetaData();
 
             while (rs.next()) {
-
                 record = new Record(rs.getRow());
 
                 for (int i = 1; i <= rsmd.getColumnCount(); i++) {
@@ -203,6 +197,18 @@ class MySQLConnection extends Connection {
 
 
         return arrayList.toArray(new Record[arrayList.size()]);
+    }
+
+    @Override
+    protected void close() throws ConnectorException {
+        try{
+            connection.close();
+        }catch (SQLException e){
+            ConnectorException ex = new ConnectorException(e,"At Close");
+            throw ex;
+        }
+
+
     }
 
 

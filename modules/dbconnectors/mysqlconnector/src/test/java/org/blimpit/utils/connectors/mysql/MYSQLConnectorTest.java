@@ -45,7 +45,7 @@ public class MYSQLConnectorTest {
     }
 
     @Test
-    public void testRead() {
+    public void testRead() throws ConnectorException {
 
         Connector y = null;
         Record[] araList;
@@ -61,6 +61,8 @@ public class MYSQLConnectorTest {
 
         } catch (ConnectorException e) {
             System.out.println(e.toString());
+        }finally {
+            y.close();
         }
 
     }
@@ -68,9 +70,9 @@ public class MYSQLConnectorTest {
     @Test
     public void testUpdate() throws ConnectorException {
         Map<String, String> records = new HashMap<String, String>();
-        records.put("LogEntrery","hello");
+        records.put("LogEntrery","Hell");
 
-        boolean update = MYSQLConnectorTest().update("table_log", "id", "5", recodes);
+        boolean update = MYSQLConnectorTest().update("table_log", "id", "7", records);
 
         assertEquals(true,update);
     }
@@ -92,6 +94,8 @@ public class MYSQLConnectorTest {
 
         } catch (ConnectorException e) {
             System.out.println(e.toString());
+        }finally {
+            y.close();
         }
     }
 

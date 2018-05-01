@@ -2,6 +2,7 @@ package org.blimpit.utils.connectors;
 
 import org.blimpit.utils.connectors.mysql.Record;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -52,5 +53,17 @@ public abstract class Connection {
      */
     protected abstract boolean update(String table, String selectionKey, String selectionVal, Map<String, String> records) throws ConnectorException;
 
+    /**
+     *
+     * @param table
+     * @return
+     * @throws ConnectorException
+     */
     protected abstract Record[] read(String table) throws ConnectorException;
+
+    /**
+     *
+     * @return
+     */
+    protected abstract void close() throws ConnectorException;
 }

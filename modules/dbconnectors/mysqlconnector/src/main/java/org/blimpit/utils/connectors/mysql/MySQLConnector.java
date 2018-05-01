@@ -4,6 +4,7 @@ import org.blimpit.utils.connectors.Connector;
 import org.blimpit.utils.connectors.ConnectorException;
 
 
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -74,6 +75,12 @@ public class MySQLConnector  implements Connector  {
 
     public Record[] read(String table) throws ConnectorException {
       return mySQLConnection.read(table);
+    }
+
+    @Override
+    public void close() throws ConnectorException {
+        mySQLConnection.close();
+
     }
 
 

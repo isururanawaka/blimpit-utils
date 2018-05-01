@@ -1,6 +1,7 @@
 package org.blimpit.utils.connectors;
 
 
+import java.sql.SQLException;
 import java.util.Map;
 import org.blimpit.utils.connectors.mysql.*;
 
@@ -63,4 +64,11 @@ public interface Connector {
      * @return Record
      */
     Record[] read(String table) throws ConnectorException;
+
+    /**
+     *
+     * @return
+     */
+    void close() throws ConnectorException;
+
 }
