@@ -69,9 +69,7 @@ public class LogHandlerImplt implements LogHandler {
         } catch (Exception e) {
             throw e;
         } finally {
-
             fstream.close();
-
         }
 
 
