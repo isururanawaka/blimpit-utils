@@ -16,7 +16,12 @@ public class MySQLConnector implements Connector {
     private MySQLConnector(String ip, String port, String dbName,
                            String username, String password) throws ConnectorException {
 
-        mySQLConnection = new MySQLConnection(ip, port, dbName, username, password);
+        mySQLConnection = new MySQLConnection(ip, port, dbName, username, password) {
+            @Override
+            protected void close() throws ConnectorException {
+
+            }
+        };
         mySQLConnection.connect();
 
     }
@@ -55,13 +60,13 @@ public class MySQLConnector implements Connector {
     }
 
 
-    public boolean isOpen() {
+    public boolean isOpen() throws ConnectorException {
         return mySQLConnection.isOpen();
     }
 
 
-    public Record[] read(String startTime, String endTime, String collectionName) throws ConnectorException {
-        return mySQLConnection.read(startTime, endTime, collectionName);
+    public Record[] read(String selectValue,String startTime, String endTime, String collectionName,String returnValue) throws ConnectorException {
+        return mySQLConnection.read(selectValue,startTime, endTime, collectionName,returnValue);
     }
 
 

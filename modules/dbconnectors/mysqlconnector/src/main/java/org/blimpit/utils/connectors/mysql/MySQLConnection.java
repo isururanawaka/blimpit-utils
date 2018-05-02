@@ -17,13 +17,8 @@ import java.util.Map;
 /**
  * Represents actual connection to the DB
  */
-class MySQLConnection extends Connection {
+public class MySQLConnection extends Connection {
 
-    String ke;
-    String validnt;
-    //String key;
-    int i = 1;
-    private PreparedStatement statement = null;
     private String ip;
     private String port;
     private String dbName;
@@ -50,32 +45,23 @@ class MySQLConnection extends Connection {
         password = "";
     }
 
-    private void maptoString(Map<String, String> recordMap) {
+    private String maptoString(Map<String, String> recordMap) {
+
+        int i = 1;
 
         StringBuilder bul = new StringBuilder();
-        StringBuilder sb = new StringBuilder();
-        //  StringBuilder keyAdd = new StringBuilder();
 
         for (String str : recordMap.keySet()) {
-            if (recordMap.size() != i) {
-                bul.append(str).append(",");
-                //        keyAdd.append(recordMap.get(str)).append(",");
-                sb.append("?").append(",");
-            } else {
-                bul.append(str);
-                //      keyAdd.append(recordMap.get(str));
-                sb.append("?");
-            }
 
+            if (recordMap.size() != i) {
+                bul.append(str).append(" = ?, ");
+            } else {
+                bul.append(str).append(" = ? ");
+            }
             i++;
         }
 
-
-        ke = bul.toString();
-        validnt = sb.toString();
-        ///key = keyAdd.toString();
-        i = 1;
-
+        return bul.toString();
     }
 
     // Connect the MYSQL Server
@@ -92,17 +78,39 @@ class MySQLConnection extends Connection {
     }
 
 
-    public boolean isOpen() {
-        return connection != null;
+    public boolean isOpen() throws ConnectorException {
+        try {
+            return connection.isValid(10);
+        } catch (SQLException e) {
+            ConnectorException ex = new ConnectorException(e, "This might be due to no Valid connection");
+            throw ex;
+        }
     }
 
     @Override
     public boolean insert(String table, Map<String, String> recordMap) throws ConnectorException {
 
-        maptoString(recordMap);
+        PreparedStatement statement;
+        int i = 1;
 
+        StringBuilder bul = new StringBuilder();
+        StringBuilder valind = new StringBuilder();
+
+        for (String str : recordMap.keySet()) {
+
+            if (recordMap.size() != i) {
+                bul.append(str).append(",");
+                valind.append("?").append(",");
+            } else {
+                bul.append(str);
+                valind.append("?");
+            }
+            i++;
+        }
+
+        i = 1;
         try {
-            statement = connection.prepareStatement("INSERT INTO " + table + "(" + ke + ") VALUES " + " (" + validnt + ")" + " "); /// specify the number of entries
+            statement = connection.prepareStatement("INSERT INTO " + table + "(" + bul.toString() + ") VALUES " + " (" + valind.toString() + ")" + " "); /// specify the number of entries
             for (String key : recordMap.keySet()) {
                 statement.setString(i, recordMap.get(key));
                 i++;
@@ -121,8 +129,10 @@ class MySQLConnection extends Connection {
     @Override
     public boolean delete(String table, String key, String val) throws ConnectorException {
 
+        PreparedStatement statement;
+
         try {
-            statement = connection.prepareStatement("DELETE FROM " + table + " WHERE " + key + "=?");
+            statement = connection.prepareStatement("DELETE FROM " + table + " WHERE " + key + "= ?");
             statement.setString(1, val);
             statement.execute();
             return true;
@@ -130,31 +140,24 @@ class MySQLConnection extends Connection {
             ConnectorException ex = new ConnectorException(e, "Delete");
             throw ex;
         }
-
     }
 
     @Override
     protected boolean update(String table, String selectionKey, String selectionVal, Map<String, String> records) throws ConnectorException {
-
-        String temp = " ";
-
-        maptoString(records);
-
-        for (String key : records.keySet()) {
-            temp = records.get(key);
-            i++;
-        }
+        PreparedStatement statement;
+        String keyChange = maptoString(records);
+        int i = 1;
 
         try {
 
-            statement = connection.prepareStatement("UPDATE " + table + " SET LogEntrery = '" + temp + "' WHERE " + selectionKey + " = " + selectionVal);
+            statement = connection.prepareStatement("UPDATE " + table + " SET " + keyChange + " WHERE " + selectionKey + " in (" + selectionVal + ")");
 
-
-            if (statement.executeUpdate() == 1)
-                return true;
-            else return false;
-            //statement.executeUpdate();
-
+            for (String key : records.keySet()) {
+                statement.setString(i, records.get(key));
+                i++;
+            }
+            statement.executeUpdate();
+            return true;
 
         } catch (SQLException e) {
 
@@ -168,6 +171,7 @@ class MySQLConnection extends Connection {
     @Override
     protected Record[] read(String table) throws ConnectorException {
 
+        PreparedStatement statement;
         Record record;
         List<Record> arrayList = new ArrayList<Record>();
 
@@ -181,46 +185,46 @@ class MySQLConnection extends Connection {
                 record = new Record(rs.getRow());
 
                 for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-
                     record.addRecordAttribute(rsmd.getColumnName(i), rs.getString(i));
                 }
 
                 arrayList.add(record);
-
             }
 
         } catch (SQLException e) {
-
             ConnectorException ex = new ConnectorException(e, "At read");
             throw ex;
         }
-
 
         return arrayList.toArray(new Record[arrayList.size()]);
     }
 
     @Override
     protected void close() throws ConnectorException {
-        try{
+
+        try {
             connection.close();
-        }catch (SQLException e){
-            ConnectorException ex = new ConnectorException(e,"At Close");
+        } catch (SQLException e) {
+            ConnectorException ex = new ConnectorException(e, "This Might Due to no connection open");
             throw ex;
         }
 
-
     }
 
-
     @Override
-    public Record[] read(String startTime, String endTime, String table) throws ConnectorException {
+    public Record[] read(String selectValue, String startTime, String endTime, String table, String returnValue) throws ConnectorException {
 
+        PreparedStatement statement;
         List<Record> arrayList = new ArrayList<Record>();
-
         Record record;
 
         try {
-            statement = connection.prepareStatement("SELECT LogEntrery FROM " + table + " WHERE Date BETWEEN " + startTime + "AND" + endTime);
+            if (returnValue.equals("*")) {
+                statement = connection.prepareStatement("SELECT * FROM " + table + " WHERE " + selectValue + " BETWEEN " + startTime + " AND " + endTime);
+            } else {
+                statement = connection.prepareStatement("SELECT " + returnValue + " FROM " + table + " WHERE " + selectValue + " BETWEEN " + startTime + " AND " + endTime);
+            }
+
             ResultSet rs = statement.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
 

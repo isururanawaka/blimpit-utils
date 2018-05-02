@@ -34,7 +34,7 @@ public interface Connector {
      *
      * @return returns
      */
-    boolean isOpen();
+    boolean isOpen() throws ConnectorException;
 
 
     /**
@@ -45,7 +45,7 @@ public interface Connector {
      * @return
      * @throws ConnectorException
      */
-    Record[] read(String startTime, String endTime, String collectionName) throws ConnectorException;
+    Record[] read(String selectValue,String startTime, String endTime, String collectionName,String returnValue) throws ConnectorException;
 
     /**
      *

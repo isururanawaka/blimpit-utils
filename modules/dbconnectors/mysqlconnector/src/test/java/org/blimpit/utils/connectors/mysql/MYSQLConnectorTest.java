@@ -2,6 +2,7 @@ package org.blimpit.utils.connectors.mysql;
 
 import org.blimpit.utils.connectors.Connector;
 import org.blimpit.utils.connectors.ConnectorException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -24,18 +25,40 @@ public class MYSQLConnectorTest {
     @Test
     public void testInsert() throws ConnectorException {
 
-        recodes.put("LogEntrery", "Test Log");
-        recodes.put("Date", "HI");
+        Map<String, String> records = new HashMap<String, String>();
+        int lengthofrecodes = 7;
+        String temp = " ";
 
-        boolean stat = MYSQLConnectorTest().insert("table_log", recodes);
-        assertEquals(true,stat);
+        String keyName = "LogEntrery";
+        String keyValue = "Hel";
+        records.put(keyName , keyValue);
+        records.put("Date","14.07");
+
+
+        MYSQLConnectorTest().insert("table_log",records);
+        Record[] table_logs = MYSQLConnectorTest().read("id","1", "100", "table_log", "LogEntrery");
+
+        lengthofrecodes = table_logs.length;
+
+        for (String key : table_logs[lengthofrecodes - 1].getRecordAttributes().keySet()) {
+
+            temp = table_logs[lengthofrecodes - 1].getRecordAttributes().get(key);
+
+        }
+        assertEquals(keyValue, temp);
 
     }
 
+    ///
     @Test
     public void testDeleteOne() throws ConnectorException {
-        boolean stat = MYSQLConnectorTest().delete("test", "val", "Hi");
-        assertEquals(true,stat);
+        int delet_id = 7;
+        String table = "table_log";
+
+        MYSQLConnectorTest().delete(table, "id", Integer.toString(delet_id));
+        Record[] read = MYSQLConnectorTest().read(table);
+
+        Assert.assertNotSame("100",read.length);
 
     }
 
@@ -47,34 +70,46 @@ public class MYSQLConnectorTest {
     @Test
     public void testRead() throws ConnectorException {
 
+        String temp =" ";
         Connector y = null;
-        Record[] araList;
 
-        try {
-            y = MySQLConnector.getInstance("localhost", "3306", "test", "root", "");
+        Record[] table_logs = MYSQLConnectorTest().read("id","1", "100", "table_log", "LogEntrery");
 
-            for (Record record : araList = y.read("test")) {
+        for (String key : table_logs[0].getRecordAttributes().keySet()) {
 
-                assertNotNull("Recodes read", record.getRecordAttributes());
+            temp = table_logs[0].getRecordAttributes().get(key);
 
-            }
-
-        } catch (ConnectorException e) {
-            System.out.println(e.toString());
-        }finally {
-            y.close();
         }
+        assertEquals("Changed", temp);
 
     }
 
     @Test
     public void testUpdate() throws ConnectorException {
         Map<String, String> records = new HashMap<String, String>();
-        records.put("LogEntrery","Hell");
+        int editRow = 7;
+        String temp = " ";
 
-        boolean update = MYSQLConnectorTest().update("table_log", "id", "7", records);
+        String keyName = "LogEntrery";
+        String keyValue = "Hel";
 
-        assertEquals(true,update);
+        records.put(keyName , keyValue);
+
+        MYSQLConnectorTest().update("table_log", "id", Integer.toString(editRow), records);
+        Record[] table_logs = MYSQLConnectorTest().read("id","1", Integer.toString(editRow), "table_log", "LogEntrery");
+
+        for (String key : table_logs[editRow - 1].getRecordAttributes().keySet()) {
+
+            temp = table_logs[editRow - 1].getRecordAttributes().get(key);
+            System.out.println(key);
+            System.out.println(temp);
+
+
+        }
+        assertEquals(keyValue, temp);
+
+
+        //assertEquals(true, update);
     }
 
     @Test
@@ -86,15 +121,15 @@ public class MYSQLConnectorTest {
         try {
             y = MySQLConnector.getInstance("localhost", "3306", "test", "root", "");
 
-            for (Record record : araList = y.read(" 12.25", " 12.50", "table_log")) {
+            for (Record record : araList = y.read("Date"," 12.25", " 12.50", "table_log", "*")) {
 
                 assertNotNull("Log Entry Records", record.getRecordAttributes());
 
             }
 
         } catch (ConnectorException e) {
-            System.out.println(e.toString());
-        }finally {
+            throw e;
+        } finally {
             y.close();
         }
     }

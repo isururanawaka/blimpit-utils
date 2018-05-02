@@ -15,7 +15,7 @@ public abstract class Connection {
      *
      * @return
      */
-    protected abstract boolean isOpen();
+    protected abstract boolean isOpen() throws ConnectorException;
 
     /**
      * @param table
@@ -41,7 +41,7 @@ public abstract class Connection {
      * @return
      * @throws ConnectorException
      */
-    protected abstract Record[] read(String startTime, String endTime, String table) throws ConnectorException;
+    protected abstract Record[] read(String selectValue,String startTime, String endTime, String table,String returnValue) throws ConnectorException;
 
     /**
      * @param table
@@ -65,5 +65,5 @@ public abstract class Connection {
      *
      * @return
      */
-    protected abstract void close() throws ConnectorException;
+    protected abstract void close() throws ConnectorException, SQLException;
 }

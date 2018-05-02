@@ -2,8 +2,9 @@ package org.blimpit.utils.connectors;
 
 public class ConnectorException extends Exception {
 
-    Throwable e;
-    String errorCause;
+    private Throwable e;
+    private String errorCause;
+
     public ConnectorException(Throwable ex, String cause){
         this.e = ex;
         this.errorCause = cause;
