@@ -8,13 +8,16 @@ import java.util.Map;
  */
 public class Record {
 
-
     private int index;
 
     private Map<String, String> recordAttributes;
 
-
+    /**
+     *
+     * @param index
+     */
     public Record(int index) {
+        this.index = index;
         this.recordAttributes = new HashMap<String, String>();
     }
 
@@ -26,7 +29,6 @@ public class Record {
     public int getIndex() {
         return index;
     }
-
 
     /**
      * Returns map of fieldnames and values
