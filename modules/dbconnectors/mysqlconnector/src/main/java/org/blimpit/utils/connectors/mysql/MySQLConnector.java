@@ -54,6 +54,11 @@ public class MySQLConnector implements Connector {
         return mySQLConnection.insert(collectionName, recordMap);
     }
 
+    @Override
+    public Record[] read(String table, String key, String value) throws ConnectorException {
+        return mySQLConnection.read(table,key,value);
+    }
+
 
     public boolean delete(String collectionName, String key, String val) throws ConnectorException {
         return mySQLConnection.delete(collectionName, key, val);

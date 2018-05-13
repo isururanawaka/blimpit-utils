@@ -68,17 +68,20 @@ public class MySQLConnection extends Connection {
     public void connect() throws ConnectorException {
 
         try {
-            //Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             connection = java.sql.DriverManager.getConnection("jdbc:mysql://" + ip + ":" + port + "/" + dbName + "?useSSL=false", "" + username, "" + password);
         } catch (SQLException e) {
-            ConnectorException ex = new ConnectorException(e, "Error in the Connection");
+            ConnectorException ex = new ConnectorException(e, "Error in the Connection SQLException");
+            throw ex;
+        } catch (ClassNotFoundException e) {
+            ConnectorException ex = new ConnectorException(e, "Error in the Connection class not found");
             throw ex;
         }
 
     }
 
 
-    public boolean isOpen() throws ConnectorException {
+    protected boolean isOpen() throws ConnectorException {
         try {
             return connection.isValid(10);
         } catch (SQLException e) {
@@ -88,7 +91,7 @@ public class MySQLConnection extends Connection {
     }
 
     @Override
-    public boolean insert(String table, Map<String, String> recordMap) throws ConnectorException {
+    protected boolean insert(String table, Map<String, String> recordMap) throws ConnectorException {
 
         PreparedStatement statement;
         int i = 1;
@@ -241,6 +244,35 @@ public class MySQLConnection extends Connection {
         }
 
         return arrayList.toArray(new Record[arrayList.size()]);
+    }
+
+    @Override
+    protected Record[] read(String table, String key, String value) throws ConnectorException {
+
+        PreparedStatement statement;
+        List<Record> arrayList = new ArrayList<Record>();
+        try {
+            statement = connection.prepareStatement("SELECT * FROM " + table + " WHERE " + key + "= ?");
+            statement.setString(1, value);
+            ResultSet rs = statement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            while (rs.next()) {
+
+               Record record = new Record(rs.getRow());
+                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                    record.addRecordAttribute(rsmd.getColumnName(i), rs.getString(i));
+                }
+                arrayList.add(record);
+            }
+        } catch (SQLException e) {
+            ConnectorException ex = new ConnectorException(e, "Database Read Error");
+            throw ex;
+
+        }
+
+    return arrayList.toArray(new Record[arrayList.size()]);
+
     }
 
 }

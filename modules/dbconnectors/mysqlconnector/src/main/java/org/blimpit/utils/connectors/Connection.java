@@ -43,6 +43,17 @@ public abstract class Connection {
      */
     protected abstract Record[] read(String selectValue,String startTime, String endTime, String table,String returnValue) throws ConnectorException;
 
+
+    /**
+     *
+     * @param table
+     * @param key matching field name
+     * @param value matching value for the field
+     * @return matching record
+     * @throws ConnectorException
+     */
+    protected abstract Record[] read(String table, String key, String value) throws ConnectorException;
+
     /**
      * @param table
      * @param selectionKey

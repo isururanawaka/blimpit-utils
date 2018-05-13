@@ -20,6 +20,17 @@ public interface Connector {
      */
     boolean insert(String collectionName, Map<String, String> recordMap) throws ConnectorException;
 
+
+    /**
+     *
+     * @param table
+     * @param key matching field name
+     * @param value matching value for the field
+     * @return matching record
+     * @throws ConnectorException
+     */
+     Record[] read(String table, String key, String value) throws ConnectorException;
+
     /**
      * delete values in a table
      *
